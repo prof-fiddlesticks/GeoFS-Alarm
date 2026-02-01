@@ -7,5 +7,5 @@ Alarms: Stall
 
 Next Version: 0.0.2
 
-Updates: Adding terrain alarm.
+Updates: Adding bank angle alarm.
 
