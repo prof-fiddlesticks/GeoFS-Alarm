@@ -7,24 +7,46 @@
 // @match        https://www.geo-fs.com/geofs.php*
 // @grant        GM.getResourceUrl
 // @resource     stall   https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/stall_warning.ogg
-// @resource     terrain https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/terrain.ogg
-// @resource     bank    https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/bankangle.ogg
 // ==/UserScript==
 
 (function () {
   const G = typeof unsafeWindow !== "undefined" ? unsafeWindow.geofs : geofs;
 
   let wasStalling = false;
+  let stallSound;
 
-  setInterval(() => {
-    const isStalling =
-      !!G.aircraft.instance.stalling &&
-      !G.animation.values.groundContact;
+  // Load sound (TM) or fallback (console)
+  if (typeof GM !== "undefined") {
+    GM.getResourceUrl("stall").then(url => {
+      stallSound = new Audio(url);
+    });
+  } else {
+    stallSound = new Audio(
+      "https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/stall_warning.ogg"
+    );
+  }
 
-    if (isStalling && !wasStalling) {
-      GM.getResourceUrl("stall").then(url => new Audio(url).play());
+  function waitForGeoFS() {
+    if (!G || !G.aircraft || !G.aircraft.instance) {
+      setTimeout(waitForGeoFS, 500);
+      return;
     }
 
-    wasStalling = isStalling;
-  }, 200);
+    console.log("GeoFS Alarm armed.");
+
+    setInterval(() => {
+      const isStalling =
+        !!G.aircraft.instance.stalling &&
+        !G.animation.values.groundContact;
+
+      if (isStalling && !wasStalling && stallSound) {
+        stallSound.currentTime = 0;
+        stallSound.play();
+      }
+
+      wasStalling = isStalling;
+    }, 200);
+  }
+
+  waitForGeoFS();
 })();
