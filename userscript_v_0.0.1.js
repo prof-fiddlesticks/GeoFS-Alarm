@@ -10,3 +10,21 @@
 // @resource     terrain https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/terrain.ogg
 // @resource     bank    https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/bankangle.ogg
 // ==/UserScript==
+
+(function () {
+  const G = typeof unsafeWindow !== "undefined" ? unsafeWindow.geofs : geofs;
+
+  let wasStalling = false;
+
+  setInterval(() => {
+    const isStalling =
+      !!G.aircraft.instance.stalling &&
+      !G.animation.values.groundContact;
+
+    if (isStalling && !wasStalling) {
+      GM.getResourceUrl("stall").then(url => new Audio(url).play());
+    }
+
+    wasStalling = isStalling;
+  }, 200);
+})();
