@@ -3,9 +3,9 @@ An extension to GeoFS to alarm you so that you know what is going on.
 
 Current Version: 0.0.1
 
-Alarms: Stall
+Alarms: Stall & Bank Angle
 
-Next Version: 0.0.2
+Next Version: 0.0.3
 
-Updates: Adding bank angle alarm.
+Updates: Adding Terrain alarm
 
