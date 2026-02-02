@@ -9,5 +9,4 @@ Next Version: 0.0.4
 
 Updates: Adding Sinkrate alarm
 
-#Note
 Unlike other people's alarm system addons for GeoFS, this one requires no installation of TamperMonkey. 
