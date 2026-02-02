@@ -9,3 +9,4 @@ Next Version: 0.0.3
 
 Updates: Adding Terrain alarm
 
+Unlike other people's alarm codes, you do not need TamperMonkey to use this, it is compatible with or without.
