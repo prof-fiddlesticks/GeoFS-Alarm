@@ -7,7 +7,7 @@
 // @match        https://www.geo-fs.com/geofs.php*
 // @grant        GM.getResourceUrl
 // @resource     stall   https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/stall_warning.ogg
-// @resource     bank    https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/bank.ogg
+// @resource     bank    https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/bankangle.ogg
 // ==/UserScript==
 
 (function () {
