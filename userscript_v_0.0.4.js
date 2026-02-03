@@ -109,20 +109,18 @@
             return seaAltitude() - G.animation.values.groundElevationFeet - 50;
         }
         const steepDescent = G.animation.values.verticalSpeed < -1000
-        if (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() && now - lastTerrainCallout >= cooldownmsTerrain) {
-            lastTerrainCallout = now;
-            terrainSound.currentTime = 0;
-            terrainSound.play()
-        }
-        else if (steepDescent && groundAltitude() <= 1500 && !onGround && terrainSound && now - lastTerrainCallout >= cooldownmsTerrain) {
-            lastTerrainCallout = now;
-            terrainSound.currentTime = 0;
-            terrainSound.play()
-        }
         const terrainActive = (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() && now - lastTerrainCallout >= cooldownmsTerrain) ||
                               (steepDescent && groundAltitude() <= 1500 && !onGround && now - lastTerrainCallout >= cooldownmsTerrain)
 
-        if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp() && now - lastSinkrateCallout >= cooldownmsSinkrate && !terrainActive) {
+        const terrainP = (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() ) ||
+                              (steepDescent && groundAltitude() <= 1500 && !onGround )
+
+        if (terrainActive && terrainSound) {
+            lastTerrainCallout = now;
+            terrainSound.currentTime = 0;
+            terrainSound.play()
+        }
+        if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp() && now - lastSinkrateCallout >= cooldownmsSinkrate && !terrainP) {
             lastSinkrateCallout = now;
             sinkrateSound.currentTime = 0;
             sinkrateSound.play()
