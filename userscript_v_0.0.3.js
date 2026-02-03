@@ -9,6 +9,7 @@
 // @resource     stall   https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/stall_warning.ogg
 // @resource     bank    https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/bankangle.ogg
 // @resource     terrain https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/terrain.ogg
+// @resource     sinkrate https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/sinkrate.ogg
 // ==/UserScript==
 
 (function () {
@@ -20,11 +21,15 @@
   let stallSound;
   let bankSound;
   let terrainSound;
+  let sinkrateSound;
 
   let lastBankCallout = 0;
   const cooldownmsBank = 2500;
   let lastTerrainCallout = 0;
   const cooldownmsTerrain = 4000;
+  let lastSinkrateCallout = 0;
+  const cooldownmsSinkrate = 3000;
+
 
 
 
@@ -34,10 +39,13 @@
       stallSound = new Audio(url);
     });
     GM.getResourceUrl("bank").then(url => {
-      bankSound = new Audio(url)
+      bankSound = new Audio(url);
     });
     GM.getResourceUrl("terrain").then(url => {
-      terrainSound = new Audio(url)
+      terrainSound = new Audio(url);
+    });
+    GM.getResourceUrl("sinkrate").then(url => {
+      sinkrateSound = new Audio(url);
     });
   } else {
     stallSound = new Audio(
@@ -48,7 +56,10 @@
     ),
     terrainSound = new Audio(
       "https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/terrain.ogg"
-    )    
+    ),
+    sinkrateSound = new Audio(
+      "https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/sinkrate.ogg"
+    )
   }
 
   function waitForGeoFS() {
@@ -98,7 +109,7 @@
             return seaAltitude() - G.animation.values.groundElevationFeet - 50;
         }
         const steepDescent = G.animation.values.verticalSpeed < -1000
-        if (isDescending() && isGearUp() && groundAltitude() <= 1500 && !onGround && terrainSound && now - lastTerrainCallout >= cooldownmsTerrain) {
+        if (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp()) {
             lastTerrainCallout = now;
             terrainSound.currentTime = 0;
             terrainSound.play()
@@ -107,6 +118,11 @@
             lastTerrainCallout = now;
             terrainSound.currentTime = 0;
             terrainSound.play()
+        }
+        if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp()) {
+            lastSinkrateCallout = now;
+            sinkrateSound.currentTime = 0;
+            sinkrateSound.play()
         }
           
       wasBanking = isBanking;
