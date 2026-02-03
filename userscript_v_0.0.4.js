@@ -109,7 +109,7 @@
             return seaAltitude() - G.animation.values.groundElevationFeet - 50;
         }
         const steepDescent = G.animation.values.verticalSpeed < -1000
-        if (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp()) {
+        if (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() && now - lastTerrainCallout >= cooldownmsTerrain) {
             lastTerrainCallout = now;
             terrainSound.currentTime = 0;
             terrainSound.play()
@@ -119,7 +119,7 @@
             terrainSound.currentTime = 0;
             terrainSound.play()
         }
-        if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp()) {
+        if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp() && now - lastSinkrateCallout >= cooldownmsSinkrate) {
             lastSinkrateCallout = now;
             sinkrateSound.currentTime = 0;
             sinkrateSound.play()
