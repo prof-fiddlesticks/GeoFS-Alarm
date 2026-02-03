@@ -26,7 +26,7 @@
   let lastBankCallout = 0;
   const cooldownmsBank = 2500;
   let lastTerrainCallout = 0;
-  const cooldownmsTerrain = 4000;
+  const cooldownmsTerrain = 13000;
   let lastSinkrateCallout = 0;
   const cooldownmsSinkrate = 3000;
 
