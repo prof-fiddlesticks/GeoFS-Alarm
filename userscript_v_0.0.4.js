@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoFS-Alarm
 // @namespace    https://github.com/prof-fiddlesticks/GeoFS-Alarm
-// @version      0.0.3
+// @version      0.0.4
 // @description  Adds alarms to GeoFS to keep you updated.
 // @author       prof-fiddlesticks
 // @match        https://www.geo-fs.com/geofs.php*
@@ -10,7 +10,7 @@
 // @resource     bank    https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/bankangle.ogg
 // @resource     terrain https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/terrain.ogg
 // @resource     sinkrate https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/sinkrate.ogg
-// ==/UserScript==
+// ==/UserScript== 
 
 (function () {
   const G = typeof unsafeWindow !== "undefined" ? unsafeWindow.geofs : geofs;
@@ -26,7 +26,7 @@
   let lastBankCallout = 0;
   const cooldownmsBank = 2500;
   let lastTerrainCallout = 0;
-  const cooldownmsTerrain = 13000;
+  const cooldownmsTerrain = 12500;
   let lastSinkrateCallout = 0;
   const cooldownmsSinkrate = 3000;
 
@@ -119,7 +119,10 @@
             terrainSound.currentTime = 0;
             terrainSound.play()
         }
-        if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp() && now - lastSinkrateCallout >= cooldownmsSinkrate) {
+        const terrainActive = (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() && now - lastTerrainCallout >= cooldownmsTerrain) ||
+                              (steepDescent && groundAltitude() <= 1500 && !onGround && now - lastTerrainCallout >= cooldownmsTerrain)
+
+        if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp() && now - lastSinkrateCallout >= cooldownmsSinkrate && !terrainActive) {
             lastSinkrateCallout = now;
             sinkrateSound.currentTime = 0;
             sinkrateSound.play()
