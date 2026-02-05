@@ -23,6 +23,7 @@
 // @resource     h1000      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/1000.ogg
 // @resource     h2500      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/2500.ogg
 // @resource     h5       https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/5.ogg
+// @resoure      retard   https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/retard.ogg
 // ==/UserScript== 
 
 (function () {
@@ -113,6 +114,9 @@
     GM.getResourceUrl("h5").then(url => {
       h5Sound = new Audio(url);
     });
+    GM.getResourceUrl("retard").then(url => {
+      retardSound = new Audio(url);
+    });
   } else {
     stallSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/stall_warning.ogg"
@@ -164,6 +168,9 @@
     )
     h5Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/5.ogg"
+    )
+    retardSound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/retard.ogg"
     )
   }
 
@@ -250,6 +257,7 @@
         playOnce("40",   groundAltitude() <= 40   && groundAltitude() > 30  && isDescending() && !onGround, h40Sound);
         playOnce("30",   groundAltitude() <= 30   && groundAltitude() > 20  && isDescending() && !onGround, h30Sound);
         playOnce("20",   groundAltitude() <= 20   && groundAltitude() > 10  && isDescending() && !onGround, h20Sound);
+        playOnce("retard",   groundAltitude() <= 20   && groundAltitude() > 10  && isDescending() && !onGround, retardSound);
         playOnce("10",   groundAltitude() <= 10   && groundAltitude() > 5   && isDescending() && !onGround, h10Sound);
         playOnce("5",    groundAltitude() <= 5    && groundAltitude() > 0   && isDescending() && !onGround, h5Sound);
 
