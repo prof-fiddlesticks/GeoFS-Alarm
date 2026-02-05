@@ -7,11 +7,11 @@ Alarms: Stall, Bank Angle, Terrain, Sinkrate, Altitude Callouts
 
 Verstion 0.0.6
 
-Updates: Fine tuning terrain and sinkrate callouts
+Updates: Adding retard, Don't Sink, flaps, & gear
 
 Version 0.0.7
 
-Updates: Adding retard, flaps, gear, retard, dont sink, minimum, & ap disconnect 
+Updates: Adding minimum, & ap disconnect 
 
 Version 0.0.8
 
