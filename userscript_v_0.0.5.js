@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoFS-Alarm
 // @namespace    https://github.com/prof-fiddlesticks/GeoFS-Alarm
-// @version      0.0.5
+// @version      0.0.5 Alpha 3
 // @description  Adds alarms to GeoFS to keep you updated.
 // @author       prof-fiddlesticks
 // @match        https://www.geo-fs.com/geofs.php*
@@ -22,8 +22,11 @@
 // @resource     h500      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/500.ogg
 // @resource     h1000      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/1000.ogg
 // @resource     h2500      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/2500.ogg
+// @resource     h2000      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/2000.ogg
 // @resource     h5       https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/5.ogg
-// @resoure      retard   https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/retard.ogg
+// @resource      retard   https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/retard.ogg
+// @resource     flaps     https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/flaps.ogg
+// @resource     gear      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/gear.ogg
 // ==/UserScript== 
 
 (function () {
@@ -37,6 +40,7 @@
   let terrainSound;
   let sinkrateSound;
   let h2500Sound;
+  let h2000Sound;
   let h1000Sound;
   let h500Sound;
   let h400Sound;
@@ -49,6 +53,8 @@
   let h20Sound;
   let h10Sound;
   let h5Sound;
+  let flapSound;
+  let gearSound;
 
   let lastBankCallout = 0;
   const cooldownmsBank = 2500;
@@ -56,7 +62,13 @@
   const cooldownmsTerrain = 12500;
   let lastSinkrateCallout = 0;
   const cooldownmsSinkrate = 3000;
+  let lastStallCallout = 0;
+  const cooldownmsStall = 5000;
   let playedCallouts = {};
+  let lastFlapCallout = 0;
+  const cooldownmsFlap = 3000;
+  let lastGearCallout = 0;
+  const cooldownmsGear = 3000;
 
 
 
@@ -77,6 +89,9 @@
     });
     GM.getResourceUrl("h2500").then(url => {
       h2500Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h2000").then(url => {
+      h2000Sound = new Audio(url);
     });
     GM.getResourceUrl("h1000").then(url => {
       h1000Sound = new Audio(url);
@@ -117,6 +132,12 @@
     GM.getResourceUrl("retard").then(url => {
       retardSound = new Audio(url);
     });
+    GM.getResourceUrl("flaps").then(url => {
+      flapSound = new Audio(url);
+    });
+    GM.getResourceUrl("gear").then(url => {
+      gearSound = new Audio(url);
+    });
   } else {
     stallSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/stall_warning.ogg"
@@ -132,6 +153,9 @@
     )
     h2500Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/2500.ogg"
+    )
+    h2000Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/2000.ogg"
     )
     h1000Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/1000.ogg"
@@ -172,6 +196,12 @@
     retardSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/retard.ogg"
     )
+    flapSound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/flap.ogg"
+    )
+    gearSound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/gear.ogg"
+    )
   }
 
   function waitForGeoFS() {
@@ -191,7 +221,8 @@
             !!G.aircraft.instance.stalling &&
             !G.animation.values.groundContact;
 
-        if (isStalling && !wasStalling && stallSound) {
+        if (isStalling && stallSound && (now - lastStallCallout >= cooldownmsStall)) {
+            lastStallCallout = now
             stallSound.currentTime = 0;
             stallSound.play();
       }
@@ -201,9 +232,9 @@
         const isBanking = !onGround && Math.abs(bankDeg) > 40;
 
         if (isBanking && bankSound) {
-            const isPlaying = !bankSound.paused && !bankSound.ended;
+            const isPlayingBank = !bankSound.paused && !bankSound.ended;
 
-            if (!isPlaying && (now - lastBankCallout >= cooldownmsBank)) {
+            if (!isPlayingBank && (now - lastBankCallout >= cooldownmsBank)) {
                 lastBankCallout = now
                 bankSound.currentTime = 0;
                 bankSound.play()
@@ -227,26 +258,31 @@
           sound.play();
           }
           }
+        const landingConfig = !isGearUp() && G.animation.values.flapsPosition >= 0.7;
 
-        const steepDescent = G.animation.values.verticalSpeed < -1000
-        const terrainActive = (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() && now - lastTerrainCallout >= cooldownmsTerrain) ||
+        const steepDescent = G.animation.values.verticalSpeed < -1800
+        const terrainActive = (!landingConfig && groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() && now - lastTerrainCallout >= cooldownmsTerrain) ||
                               (steepDescent && groundAltitude() <= 1500 && !onGround && now - lastTerrainCallout >= cooldownmsTerrain)
 
-        const terrainPossibility = (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() ) ||
-                              (steepDescent && groundAltitude() <= 1500 && !onGround )
+        const terrainPossibility = (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp()  && !landingConfig) ||
+                              (steepDescent && groundAltitude() <= 1000 && !onGround )
 
         if (terrainActive && terrainSound) {
             lastTerrainCallout = now;
             terrainSound.currentTime = 0;
             terrainSound.play()
         }
+        const sinkratePossibility = steepDescent && groundAltitude() < 2500 && !onGround && isGearUp()
+
         if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp() && now - lastSinkrateCallout >= cooldownmsSinkrate && !terrainPossibility) {
             lastSinkrateCallout = now;
             sinkrateSound.currentTime = 0;
             sinkrateSound.play()
         }
+        const thrustHigh = G.animation.values.throttle > 0.2;
 
         playOnce("2500", groundAltitude() <= 2500 && groundAltitude() > 2400 && isDescending() && !onGround, h2500Sound);
+        playOnce("2000", groundAltitude() <= 2000 && groundAltitude() > 1900 && isDescending() && !onGround, h2000Sound);
         playOnce("1000", groundAltitude() <= 1000 && groundAltitude() > 900 && isDescending() && !onGround, h1000Sound);
         playOnce("500",  groundAltitude() <= 500  && groundAltitude() > 400 && isDescending() && !onGround, h500Sound);
         playOnce("400",  groundAltitude() <= 400  && groundAltitude() > 300 && isDescending() && !onGround, h400Sound);
@@ -259,10 +295,23 @@
         playOnce("20",   groundAltitude() <= 20   && groundAltitude() > 10  && isDescending() && !onGround, h20Sound);
         playOnce("retard",   groundAltitude() <= 20   && groundAltitude() > 10  && isDescending() && !onGround, retardSound);
         playOnce("10",   groundAltitude() <= 10   && groundAltitude() > 5   && isDescending() && !onGround, h10Sound);
-        playOnce("5",    groundAltitude() <= 5    && groundAltitude() > 0   && isDescending() && !onGround, h5Sound);
+        playOnce("5",    groundAltitude() <= 5    && groundAltitude() > 0   && isDescending() && !onGround && !thrustHigh, h5Sound);
 
       if (!isDescending() || onGround) {
         playedCallouts = {};
+      }
+
+      if (groundAltitude() < 1000 && isDescending() && !onGround && isGearUp() && (now - lastGearCallout >= cooldownmsGear)) {
+        lastGearCallout = now;
+        gearSound.currentTime = 0;
+        gearSound.play()
+      }
+      const flapsNotLanding = G.animation.values.flapsPosition < 0.7;
+
+      if (groundAltitude() < 1000 && isDescending() && !onGround && flapsNotLanding && (now - lastFlapCallout >= cooldownmsFlap)) {
+        lastFlapCallout = now;
+        flapSound.currentTime = 0;
+        flapSound.play()
       }
 
       wasBanking = isBanking;
