@@ -1,15 +1,28 @@
 // ==UserScript==
 // @name         GeoFS-Alarm
 // @namespace    https://github.com/prof-fiddlesticks/GeoFS-Alarm
-// @version      0.0.4
+// @version      0.0.5
 // @description  Adds alarms to GeoFS to keep you updated.
 // @author       prof-fiddlesticks
 // @match        https://www.geo-fs.com/geofs.php*
 // @grant        GM.getResourceUrl
-// @resource     stall   https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/stall_warning.ogg
-// @resource     bank    https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/bankangle.ogg
-// @resource     terrain https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/terrain.ogg
-// @resource     sinkrate https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/sinkrate.ogg
+// @resource     stall   https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/stall_warning.ogg
+// @resource     bank    https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/bankangle.ogg
+// @resource     terrain https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/terrain.ogg
+// @resource     sinkrate https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/sinkrate.ogg
+// @resource     h10      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/10.ogg
+// @resource     h20      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/20.ogg
+// @resource     h30      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/30.ogg
+// @resource     h40      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/40.ogg
+// @resource     h50      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/50.ogg
+// @resource     h100      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/100.ogg
+// @resource     h200      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/200.ogg
+// @resource     h300      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/300.ogg
+// @resource     h400      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/400.ogg
+// @resource     h500      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/500.ogg
+// @resource     h1000      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/1000.ogg
+// @resource     h2500      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/2500.ogg
+// @resource     h5       https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/5.ogg
 // ==/UserScript== 
 
 (function () {
@@ -22,6 +35,19 @@
   let bankSound;
   let terrainSound;
   let sinkrateSound;
+  let h2500Sound;
+  let h1000Sound;
+  let h500Sound;
+  let h400Sound;
+  let h300Sound;
+  let h200Sound;
+  let h100Sound;
+  let h50Sound;
+  let h40Sound;
+  let h30Sound;
+  let h20Sound;
+  let h10Sound;
+  let h5Sound;
 
   let lastBankCallout = 0;
   const cooldownmsBank = 2500;
@@ -29,6 +55,7 @@
   const cooldownmsTerrain = 12500;
   let lastSinkrateCallout = 0;
   const cooldownmsSinkrate = 3000;
+  let playedCallouts = {};
 
 
 
@@ -47,18 +74,96 @@
     GM.getResourceUrl("sinkrate").then(url => {
       sinkrateSound = new Audio(url);
     });
+    GM.getResourceUrl("h2500").then(url => {
+      h2500Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h1000").then(url => {
+      h1000Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h500").then(url => {
+      h500Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h400").then(url => {
+      h400Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h300").then(url => {
+      h300Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h200").then(url => {
+      h200Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h100").then(url => {
+      h100Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h50").then(url => {
+      h50Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h40").then(url => {
+      h40Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h30").then(url => {
+      h30Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h20").then(url => {
+      h20Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h10").then(url => {
+      h10Sound = new Audio(url);
+    });
+    GM.getResourceUrl("h5").then(url => {
+      h5Sound = new Audio(url);
+    });
   } else {
     stallSound = new Audio(
-      "https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/stall_warning.ogg"
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/stall_warning.ogg"
     ),
     bankSound = new Audio(
-      "https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/bankangle.ogg"
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/bankangle.ogg"
     ),
     terrainSound = new Audio(
-      "https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/terrain.ogg"
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/terrain.ogg"
     ),
     sinkrateSound = new Audio(
-      "https://raw.githubusercontent.com/prof-fiddlesticks/GeoFS-Alarm/main/sinkrate.ogg"
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/sinkrate.ogg"
+    )
+    h2500Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/2500.ogg"
+    )
+    h1000Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/1000.ogg"
+    )
+    h500Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/500.ogg"
+    )
+    h400Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/400.ogg"
+    )
+    h300Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/300.ogg"
+    )
+    h200Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/200.ogg"
+    )
+    h100Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/100.ogg"
+    )
+    h50Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/50.ogg"
+    )
+    h40Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/40.ogg"
+    )
+    h30Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/30.ogg"
+    )
+    h20Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/20.ogg"
+    )
+    h10Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/10.ogg"
+    )
+    h5Sound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/5.ogg"
     )
   }
 
@@ -108,11 +213,19 @@
         function groundAltitude() {
             return seaAltitude() - G.animation.values.groundElevationFeet - 50;
         }
+        function playOnce(name, condition, sound) {
+          if (condition && !playedCallouts[name] && sound) {
+          playedCallouts[name] = true;
+          sound.currentTime = 0;
+          sound.play();
+          }
+          }
+
         const steepDescent = G.animation.values.verticalSpeed < -1000
         const terrainActive = (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() && now - lastTerrainCallout >= cooldownmsTerrain) ||
                               (steepDescent && groundAltitude() <= 1500 && !onGround && now - lastTerrainCallout >= cooldownmsTerrain)
 
-        const terrainP = (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() ) ||
+        const terrainPossibility = (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() ) ||
                               (steepDescent && groundAltitude() <= 1500 && !onGround )
 
         if (terrainActive && terrainSound) {
@@ -120,12 +233,30 @@
             terrainSound.currentTime = 0;
             terrainSound.play()
         }
-        if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp() && now - lastSinkrateCallout >= cooldownmsSinkrate && !terrainP) {
+        if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp() && now - lastSinkrateCallout >= cooldownmsSinkrate && !terrainPossibility) {
             lastSinkrateCallout = now;
             sinkrateSound.currentTime = 0;
             sinkrateSound.play()
         }
-          
+
+        playOnce("2500", groundAltitude() <= 2500 && groundAltitude() > 2400 && isDescending() && !onGround, h2500Sound);
+        playOnce("1000", groundAltitude() <= 1000 && groundAltitude() > 900 && isDescending() && !onGround, h1000Sound);
+        playOnce("500",  groundAltitude() <= 500  && groundAltitude() > 400 && isDescending() && !onGround, h500Sound);
+        playOnce("400",  groundAltitude() <= 400  && groundAltitude() > 300 && isDescending() && !onGround, h400Sound);
+        playOnce("300",  groundAltitude() <= 300  && groundAltitude() > 200 && isDescending() && !onGround, h300Sound);
+        playOnce("200",  groundAltitude() <= 200  && groundAltitude() > 100 && isDescending() && !onGround, h200Sound);
+        playOnce("100",  groundAltitude() <= 100  && groundAltitude() > 50  && isDescending() && !onGround, h100Sound);
+        playOnce("50",   groundAltitude() <= 50   && groundAltitude() > 40  && isDescending() && !onGround, h50Sound);
+        playOnce("40",   groundAltitude() <= 40   && groundAltitude() > 30  && isDescending() && !onGround, h40Sound);
+        playOnce("30",   groundAltitude() <= 30   && groundAltitude() > 20  && isDescending() && !onGround, h30Sound);
+        playOnce("20",   groundAltitude() <= 20   && groundAltitude() > 10  && isDescending() && !onGround, h20Sound);
+        playOnce("10",   groundAltitude() <= 10   && groundAltitude() > 5   && isDescending() && !onGround, h10Sound);
+        playOnce("5",    groundAltitude() <= 5    && groundAltitude() > 0   && isDescending() && !onGround, h5Sound);
+
+      if (!isDescending() || onGround) {
+        playedCallouts = {};
+      }
+
       wasBanking = isBanking;
     }, 200);
   }
