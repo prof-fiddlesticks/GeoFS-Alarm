@@ -34,6 +34,7 @@
 
   let wasStalling = false;
   let wasBanking = false;
+  let terrainStartTime = null;
 
   let stallSound;
   let bankSound;
@@ -273,11 +274,24 @@
         const terrainPossibility = (!landingConfig && agl <= 1500 &&isDescending() &&!onGround &&isGearUp()) ||
     ((steepHigh || steepMid) && !onGround && (!landingConfig || agl > 600));
 
-        if (terrainActive && terrainSound) {
-            lastTerrainCallout = now;
-            terrainSound.currentTime = 0;
-            terrainSound.play()
-        }
+        if (terrainPossibility && terrainSound && !onGround) {
+          if (terrainStartTime === null) {
+          terrainStartTime = now;
+          }      
+          if (
+            now - terrainStartTime >= 1000 &&
+            now - lastTerrainCallout >= cooldownmsTerrain
+          ) {
+        lastTerrainCallout = now;
+        terrainSound.currentTime = 0;
+        terrainSound.play();
+    }
+
+} else {
+    // Reset timer if terrain condition disappears
+    terrainStartTime = null;
+}
+
         const sinkratePossibility = steepDescent && groundAltitude() < 2500 && !onGround && isGearUp()
 
         if (steepDescent && groundAltitude() < 2500 && !onGround && isGearUp() && now - lastSinkrateCallout >= cooldownmsSinkrate && !terrainPossibility) {
