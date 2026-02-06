@@ -142,67 +142,67 @@
   } else {
     stallSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/stall_warning.ogg"
-    ),
+    );
     bankSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/bankangle.ogg"
-    ),
+    );
     terrainSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/terrain.ogg"
-    ),
+    );
     sinkrateSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/sinkrate.ogg"
-    )
+    );
     h2500Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/2500.ogg"
-    )
+    );
     h2000Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/2000.ogg"
-    )
+    );
     h1000Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/1000.ogg"
-    )
+    );
     h500Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/500.ogg"
-    )
+    );
     h400Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/400.ogg"
-    )
+    );
     h300Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/300.ogg"
-    )
+    );
     h200Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/200.ogg"
-    )
+    );
     h100Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/100.ogg"
-    )
+    );
     h50Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/50.ogg"
-    )
+    );
     h40Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/40.ogg"
-    )
+    );
     h30Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/30.ogg"
-    )
+    );
     h20Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/20.ogg"
-    )
+    );
     h10Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/10.ogg"
-    )
+    );
     h5Sound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/5.ogg"
-    )
+    );
     retardSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/retard.ogg"
-    )
+    );
     flapSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/flap.ogg"
-    )
+    );
     gearSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/gear.ogg"
-    )
+    );
   }
 
   function waitForGeoFS() {
@@ -266,7 +266,7 @@
         const steepDescent = vs < -3600;
 
         const terrainPossibility = (!landingConfig && agl <= 1500 &&isDescending() &&!onGround &&isGearUp()) ||
-    ((agl <= 1500 && steepDescent && !onGround )
+    ((agl <= 1500 && steepDescent && !onGround ));
 
         if (terrainPossibility && terrainSound && !onGround) {
           if (terrainStartTime === null) {
