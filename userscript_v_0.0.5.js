@@ -260,12 +260,18 @@
           }
         const landingConfig = !isGearUp() && G.animation.values.flapsPosition >= 0.7;
 
-        const steepDescent = G.animation.values.verticalSpeed < -2400
-        const terrainActive = (!landingConfig && groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() && now - lastTerrainCallout >= cooldownmsTerrain) ||
-                              (steepDescent && groundAltitude() <= 1500 && !onGround && now - lastTerrainCallout >= cooldownmsTerrain)
+        const vs = G.animation.values.verticalSpeed; // fpm
+        const agl = groundAltitude();
 
-        const terrainPossibility = (groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp()  && !landingConfig) ||
-                              (steepDescent && groundAltitude() <= 1000 && !onGround )
+        const steepHigh = vs < -2400 && agl > 800;
+        const steepMid  = vs < -2000 && agl > 500;
+
+        const terrainActive = (!landingConfig && agl <= 1500 &&isDescending() &&!onGround &&isGearUp() && (now - lastTerrainCallout >= cooldownmsTerrain)) ||
+    ((steepHigh || steepMid) &&!onGround && (now - lastTerrainCallout >= cooldownmsTerrain) );
+
+
+        const terrainPossibility = (!landingConfig && agl <= 1500 &&isDescending() &&!onGround &&isGearUp()) ||
+    ((steepHigh || steepMid) &&!onGround )
 
         if (terrainActive && terrainSound) {
             lastTerrainCallout = now;
