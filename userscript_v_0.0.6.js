@@ -266,7 +266,7 @@
         const steepDescent = vs < -3600;
 
         const terrainPossibility = (!landingConfig && agl <= 1500 &&isDescending() &&!onGround &&isGearUp()) ||
-    ((agl <= 1500 && steepDescent && !onGround );
+    ((agl <= 1500 && steepDescent && !onGround )
 
         if (terrainPossibility && terrainSound && !onGround) {
           if (terrainStartTime === null) {
