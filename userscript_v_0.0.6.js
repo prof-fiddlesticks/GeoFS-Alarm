@@ -54,6 +54,7 @@
   let h20Sound;
   let h10Sound;
   let h5Sound;
+  let retardSound;
   let flapSound;
   let gearSound;
 
