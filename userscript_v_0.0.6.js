@@ -263,14 +263,14 @@
 
         const vs = G.animation.values.verticalSpeed; // fpm
         const agl = groundAltitude();
-        const steepDescent = vs < -3600;
+        const steepDescent = vs < -4200;
 
         const terrainPossibility = (!landingConfig && agl <= 1500 &&isDescending() &&!onGround &&isGearUp()) ||
     ((agl <= 1500 && steepDescent && !onGround ));
 
         if (terrainPossibility && terrainSound && !onGround) {
           if (terrainStartTime === null) {
-          terrainStartTime = now;
+            terrainStartTime = now;
           }      
           if (
             now - terrainStartTime >= 1000 &&
