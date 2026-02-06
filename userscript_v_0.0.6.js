@@ -69,7 +69,7 @@
   let lastFlapCallout = 0;
   const cooldownmsFlap = 3000;
   let lastGearCallout = 0;
-  const cooldownmsGear = 3000;
+  const cooldownmsGear = 7000;
 
 
 
