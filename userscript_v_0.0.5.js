@@ -260,7 +260,7 @@
           }
         const landingConfig = !isGearUp() && G.animation.values.flapsPosition >= 0.7;
 
-        const steepDescent = G.animation.values.verticalSpeed < -1800
+        const steepDescent = G.animation.values.verticalSpeed < -3000
         const terrainActive = (!landingConfig && groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() && now - lastTerrainCallout >= cooldownmsTerrain) ||
                               (steepDescent && groundAltitude() <= 1500 && !onGround && now - lastTerrainCallout >= cooldownmsTerrain)
 
