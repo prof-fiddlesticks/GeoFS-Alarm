@@ -240,7 +240,7 @@
                 bankSound.play()
             }}
         function isDescending() {
-            return G.animation.values.verticalSpeed < -400;
+            return G.animation.values.verticalSpeed < -1000;
         }
         function isGearUp() {
             return G.animation.values.gearPosition == 1;
@@ -260,7 +260,7 @@
           }
         const landingConfig = !isGearUp() && G.animation.values.flapsPosition >= 0.7;
 
-        const steepDescent = G.animation.values.verticalSpeed < -3000
+        const steepDescent = G.animation.values.verticalSpeed < -1800
         const terrainActive = (!landingConfig && groundAltitude() <= 1500 && isDescending() && !onGround && isGearUp() && now - lastTerrainCallout >= cooldownmsTerrain) ||
                               (steepDescent && groundAltitude() <= 1500 && !onGround && now - lastTerrainCallout >= cooldownmsTerrain)
 
