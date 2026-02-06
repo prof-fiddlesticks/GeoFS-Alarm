@@ -262,7 +262,7 @@
 
         const vs = G.animation.values.verticalSpeed; // fpm
         const agl = groundAltitude();
-
+        const steepDescent = vs < -1800;
         const steepHigh = vs < -2400 && agl > 800;
         const steepMid  = vs < -2000 && agl > 500;
 
@@ -271,7 +271,7 @@
 
 
         const terrainPossibility = (!landingConfig && agl <= 1500 &&isDescending() &&!onGround &&isGearUp()) ||
-    ((steepHigh || steepMid) &&!onGround )
+    ((steepHigh || steepMid) && !onGround && (!landingConfig || agl > 600));
 
         if (terrainActive && terrainSound) {
             lastTerrainCallout = now;
