@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoFS-Alarm
 // @namespace    https://github.com/prof-fiddlesticks/GeoFS-Alarm
-// @version      0.0.5 Alpha 3
+// @version      0.0.6
 // @description  Adds alarms to GeoFS to keep you updated.
 // @author       prof-fiddlesticks
 // @match        https://www.geo-fs.com/geofs.php*
