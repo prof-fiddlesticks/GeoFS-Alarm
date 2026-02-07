@@ -7,7 +7,7 @@ Alarms: Stall, Bank Angle, Terrain, Sinkrate, Altitude Callouts, Retard, Too Low
 
 Version 0.0.7
 
-Release: 2/6/2026
+Release: 2/7/2026
 
 Updates: Adding minimum, Don't Sink, AP Disconnect, & tweaking with sinkrate/terrain callouts.
 
