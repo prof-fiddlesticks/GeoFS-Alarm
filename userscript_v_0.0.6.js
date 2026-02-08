@@ -1,7 +1,8 @@
+
 // ==UserScript==
 // @name         GeoFS-Alarm
 // @namespace    https://github.com/prof-fiddlesticks/GeoFS-Alarm
-// @version      0.0.6
+// @version      0.0.6 Alpha 1
 // @description  Adds alarms to GeoFS to keep you updated.
 // @author       prof-fiddlesticks
 // @match        https://www.geo-fs.com/geofs.php*
@@ -27,6 +28,7 @@
 // @resource      retard   https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/retard.ogg
 // @resource     flaps     https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/flaps.ogg
 // @resource     gear      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/gear.ogg
+// @resource     ap-disconnect https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/ap-disconnect.ogg
 // ==/UserScript== 
 
 (function () {
@@ -35,6 +37,8 @@
   let wasStalling = false;
   let wasBanking = false;
   let terrainStartTime = null;
+  window.wasAPOn = G.autopilot?.on ?? false;
+
 
   let stallSound;
   let bankSound;
@@ -57,6 +61,7 @@
   let retardSound;
   let flapSound;
   let gearSound;
+  let apdisconnectSound;
 
   let lastBankCallout = 0;
   const cooldownmsBank = 2500;
@@ -72,10 +77,6 @@
   let lastGearCallout = 0;
   const cooldownmsGear = 7000;
 
-
-
-
-  // Load sound (TM) or fallback (console)
   if (typeof GM !== "undefined") {
     GM.getResourceUrl("stall").then(url => {
       stallSound = new Audio(url);
@@ -140,6 +141,9 @@
     GM.getResourceUrl("gear").then(url => {
       gearSound = new Audio(url);
     });
+    GM.getResourceUrl("ap-disconnect").then(url => {
+      apdisconnectSound = new Audio(url);
+    })
   } else {
     stallSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/stall_warning.ogg"
@@ -199,11 +203,14 @@
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/retard.ogg"
     );
     flapSound = new Audio(
-      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/flap.ogg"
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/flaps.ogg"
     );
     gearSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/gear.ogg"
     );
+    apdisconnectSound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/ap-disconnect.ogg"
+    )
   }
 
   function waitForGeoFS() {
@@ -216,6 +223,11 @@
     
 
     setInterval(() => {
+
+        if (typeof window.wasAPOn !== "boolean") {
+      window.wasAPOn = G.autopilot.on;
+      }
+
         const onGround = !!G.animation.values.groundContact;
         const now = Date.now()
 
@@ -242,7 +254,7 @@
                 bankSound.play()
             }}
         function isDescending() {
-            return G.animation.values.verticalSpeed < -2400;
+            return G.animation.values.verticalSpeed < -600;
         }
         function isGearUp() {
             return G.animation.values.gearPosition == 1;
@@ -262,12 +274,13 @@
           }
         const landingConfig = !isGearUp() && G.animation.values.flapsPosition >= 0.7;
 
-        const vs = G.animation.values.verticalSpeed; // fpm
+        const vs = G.animation.values.verticalSpeed; 
         const agl = groundAltitude();
-        const steepDescent = vs < -4200;
+        const steepDescent = vs < -2400
+        const extremeDescent = vs < -3500;
 
-        const terrainPossibility = (!landingConfig && agl <= 1500 &&isDescending() &&!onGround &&isGearUp()) ||
-    ((agl <= 1500 && steepDescent && !onGround ));
+        const terrainPossibility = (!landingConfig && agl <= 1500 && extremeDescent &&!onGround &&isGearUp()) ||
+    ((agl <= 1500 && extremeDescent && !onGround ));
 
         if (terrainPossibility && terrainSound && !onGround) {
           if (terrainStartTime === null) {
@@ -283,7 +296,6 @@
     }
 
 } else {
-    // Reset timer if terrain condition disappears
     terrainStartTime = null;
 }
 
@@ -295,6 +307,12 @@
             sinkrateSound.play()
         }
         const thrustHigh = G.animation.values.throttle > 0.2;
+
+        if (!G.autopilot.on && window.wasAPOn && apdisconnectSound) {
+          apdisconnectSound.currentTime = 0;
+          apdisconnectSound.play()
+        }
+        window.wasAPOn = G.autopilot.on;
 
         playOnce("2500", groundAltitude() <= 2500 && groundAltitude() > 2400 && isDescending() && !onGround, h2500Sound);
         playOnce("2000", groundAltitude() <= 2000 && groundAltitude() > 1900 && isDescending() && !onGround, h2000Sound);
