@@ -1,15 +1,15 @@
 # GeoFS-Alarm
 An extension to GeoFS to alarm you so that you know what is going on.
 
-Current Version: 0.0.6
+Current Version: 0.0.6 Alpha 1
 
-Alarms: Stall, Bank Angle, Terrain, Sinkrate, Altitude Callouts, Retard, Too Low Flaps, Too Low Gear
+Alarms: Stall, Bank Angle, Terrain, Sinkrate, Altitude Callouts, Retard, Too Low Flaps, Too Low Gear, & AP Disconnect
 
 Version 0.0.7
 
 Release: 2/9/2026
 
-Updates: Adding minimum, Don't Sink, AP Disconnect, & tweaking with sinkrate/terrain callouts.
+Updates: Adding minimum, Don't Sink.
 
 Version 0.0.8
 
