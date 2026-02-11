@@ -29,6 +29,8 @@
 // @resource     flaps     https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/flaps.ogg
 // @resource     gear      https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/gear.ogg
 // @resource     ap-disconnect https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/ap-disconnect.ogg
+// @resource     minimum   https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/minimum.ogg
+// @resource     dont-sink  https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/dont-sink.ogg
 // ==/UserScript== 
 
 (function () {
@@ -38,6 +40,8 @@
   let wasBanking = false;
   let terrainStartTime = null;
   window.wasAPOn = G.autopilot?.on ?? false;
+  window.iminimums = false;
+  let minimum = 200;
 
 
   let stallSound;
@@ -62,6 +66,8 @@
   let flapSound;
   let gearSound;
   let apdisconnectSound;
+  let minimumSound;
+  let dontsinkSound;
 
   let lastBankCallout = 0;
   const cooldownmsBank = 2500;
@@ -76,6 +82,10 @@
   const cooldownmsFlap = 3000;
   let lastGearCallout = 0;
   const cooldownmsGear = 7000;
+  let lastMinimumCallout = 0;
+  const cooldownmsMinimum = 4000;
+  let lastdontsinkCallout = 0;
+  const cooldownmsdontSink = 5000;
 
   if (typeof GM !== "undefined") {
     GM.getResourceUrl("stall").then(url => {
@@ -143,7 +153,13 @@
     });
     GM.getResourceUrl("ap-disconnect").then(url => {
       apdisconnectSound = new Audio(url);
-    })
+    });
+    GM.getResourceUrl("minimum").then(url => {
+      minimumSound = new Audio(url);
+    });
+    GM.getResourceUrl("dont-sink").then(url => {
+      dontsinkSound = new Audio(url)
+    });
   } else {
     stallSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/stall_warning.ogg"
@@ -210,7 +226,13 @@
     );
     apdisconnectSound = new Audio(
       "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/ap-disconnect.ogg"
-    )
+    );
+    minimumSound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/minimum.ogg"
+    );
+    dontsinkSound = new Audio(
+      "https://github.com/prof-fiddlesticks/geofs-alarm/raw/main/audio/dont-sink.ogg"
+    );
   }
 
   function waitForGeoFS() {
@@ -254,7 +276,13 @@
                 bankSound.play()
             }}
         function isDescending() {
+            return G.animation.values.verticalSpeed < -300;
+        }
+        function isFastDescending() {
             return G.animation.values.verticalSpeed < -600;
+        }
+        function isExtremeDescending() {
+            return G.animation.values.verticalSpeed < -2400;
         }
         function isGearUp() {
             return G.animation.values.gearPosition == 1;
@@ -330,7 +358,7 @@
         playOnce("10",   groundAltitude() <= 10   && groundAltitude() > 5   && isDescending() && !onGround, h10Sound);
         playOnce("5",    groundAltitude() <= 5    && groundAltitude() > 0   && isDescending() && !onGround && !thrustHigh, h5Sound);
 
-      if (!isDescending() || onGround) {
+      if (G.animation.values.verticalSpeed > 0  || onGround) {
         playedCallouts = {};
       }
 
@@ -347,8 +375,44 @@
         flapSound.play()
       }
 
+      const dontSinkVs = -600;  
+      const dontSinkAgl = 500;  
+      const dontSinkThrottle = 0.2; 
+      
+      if (agl < dontSinkAgl && isFastDescending() && G.animation.values.throttle < dontSinkThrottle 
+          && !onGround && (now - lastdontsinkCallout >= cooldownmsdontSink) && !terrainPossibility && !sinkratePossibility) {
+        lastdontsinkCallout = now;
+        dontsinkSound.currentTime = 0;
+        dontsinkSound.play()    
+          }
+    
+
+      if (minimum !== undefined &&
+          isDescending() &&
+          !onGround &&
+          agl + 2 > minimum &&
+          minimum > agl - 2 &&
+          !window.iminimums &&
+          (now - lastMinimumCallout >= cooldownmsMinimum)
+        ) {
+
+          lastMinimumCallout = now;
+          minimumSound.currentTime = 0;
+          minimumSound.play();
+          window.iminimums = true;
+        }
+
+      if (minimum !== undefined && agl > minimum + 100) {
+        window.iminimums = false;
+      }
+
+      if (onGround) {
+        window.iminimums = false;
+      }
+
       wasBanking = isBanking;
     }, 200);
+
   }
 
   waitForGeoFS();
