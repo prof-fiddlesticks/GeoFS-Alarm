@@ -12,3 +12,5 @@ Release: 2/11/2026
 Updates: Seperating callouts between Airbus & Boeing models
 
 Unlike other people's alarm system addons for GeoFS, this one requires no installation of TamperMonkey. 
+
+NOTE: WE ARE HIRING 2 PEOPLE TO WORK ON VERSION 0.0.8
