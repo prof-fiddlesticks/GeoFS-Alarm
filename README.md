@@ -7,7 +7,7 @@ Alarms: Stall, Bank Angle, Terrain, Sinkrate, Altitude Callouts, Retard, Too Low
 
 Version 0.0.8
 
-Release: 2/13/2026
+Release: 2/15/2026
 
 Updates: Seperating callouts between Airbus & Boeing models
 
