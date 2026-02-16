@@ -13,6 +13,6 @@ Updates: Seperating callouts between Airbus & Boeing models
 
 Unlike other people's alarm system addons for GeoFS, this one requires no installation of TamperMonkey. 
 
-NOTE: WE ARE HIRING 2 PEOPLE TO WORK ON VERSION 0.0.8
+NOTE: WE WANT TO COLAB WITH 1 PERSON TO WORK ON VERSION 0.0.8
 
-IF YOU WANT TO GET HIRED THEN STAR THE REPOSITORY SO THAT I CAN SEE WHO STARRED IT AND ADD YOU
+IF YOU WANT TO COLAB THEN STAR THE REPOSITORY SO THAT I CAN SEE WHO STARRED IT AND ADD YOU
