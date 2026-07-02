@@ -7,12 +7,12 @@ Alarms: Stall, Bank Angle, Terrain, Sinkrate, Altitude Callouts, Retard, Too Low
 
 Version 0.0.8
 
-Release: 4/04/2026
+Release: N/A (Not in work right now, we are working on other features to fix)
 
 Updates: Seperating callouts between Airbus & Boeing models
 
 Unlike other people's alarm system addons for GeoFS, this one requires no installation of TamperMonkey. 
 
-NOTE: WE WANT TO COLAB WITH 1 PERSON TO WORK ON VERSION 0.0.8
+NOTE: WE WANT TO COLAB WITH 1 PERSON TO WORK ON VERSION 0.0.8 AND OTHER FEATURES
 
 IF YOU WANT TO COLAB THEN STAR THE REPOSITORY SO THAT I CAN SEE WHO STARRED IT AND ADD YOU
